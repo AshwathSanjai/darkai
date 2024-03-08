@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+</head>
+
+<body>
+  <header id="title-box">
+    <div class="text-container">
+      <span id="center-text" class="reveal-text">Dark AI</span>
+      <span id="cycle-text"></span>
+    </div>
+  </header>
+<div id="background"></div>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Madimi+One&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js"></script>
+
+<div id="input-box">
+  <div id="button1" class="dropdown">
+    <button onclick="toggleOptionsPopup()">
+    <img src="{{url_for('static', filename='/Image/text.png')}}" alt="Options">
+    </button>
+    <div id="options-popup" class="hidden">
+    <a href="https://darkai.onrender.com" class="option" target="_blank">
+    <img src="{{url_for('static', filename='/Image/text.png')}}" alt="Option 1">
+    <span>Text</span>
+    </a>
+    <a href="https://darkaiimage.onrender.com" class="option" target="_blank">
+    <img src="{{url_for('static', filename='/Image/image.png')}}" alt="Option 2">
+    <span>image</span>
+    </a>
+    <a href="http://192.168.0.102:5000" class="option" target="_blank">
+    <img src="{{url_for('static', filename='/Image/object.png')}}" alt="Option 3">
+    <span>Object</span>
+    </a>
+    </div>
+    </div>
+
+<input type="text" onkeypress="handleKeyPress(event)">
+
+<button id="button2" onclick="explodeAnimation()">
+<img src="{{url_for('static', filename='/Image/Untitled(2).png')}}" alt="Button 2">
+</button>
+
+<button id="button3" onclick="sendMessage(inputText)">
+<img src="{{url_for('static', filename='/Image/mic.png')}}" alt="Button 3">
+</button>
+</div>
+
+<div class="chat-container">
+  <div class="message-box left left-align">
+  </div>
+</div>
+
+<style>
+  #title-box, #input-box {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    z-index: 100; /* Keeps these elements on top */
+}
+
+#title-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #0f4d92;
+  color: #333333;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  top: 10px;
+  position: fixed;
+  width: 90%;
+  left: 50px;
+  padding: 20px;
+  font-size: 24px;
+  margin-right: 1;
+  z-index: 1;
+  overflow: hidden;
+font-family: "Madimi One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: xx-large;
+}
+
+.text-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-family: "Anta", sans-serif;
+font-weight: 400;
+font-style: normal;
+}
+
+#center-text,
+#cycle-text {
+  font-family: "Madimi One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.reveal-text {
+  opacity: 0;
+  animation: reveal 1s ease-in-out forwards;
+  font-family: "Anta", sans-serif;
+font-weight: 400;
+font-style: normal;
+}
+
+@keyframes reveal {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+#background {
+position: fixed;
+top: 0;
+right: 0;
+bottom: 0;
+left: 0;
+z-index: -1;
+}
+
+body {
+overflow: hidden;
+margin: 0;
+padding: 0;
+height: 100vh;
+}
+
+#app {
+position: relative;
+height: 100%;
+padding-top: 60px;
+}
+#input-box {
+position: absolute;
+bottom: 20px;
+left: 110px;
+width: 80%;
+display: flex;
+align-items: center;
+padding: 15px;
+border-radius: 10px;
+background: #0067a5;
+box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+color: white;
+}
+
+#input-box input[type="text"] {
+
+flex: 1;
+padding: 15px;
+
+font-size: 20px;
+color: white;
+
+border: 1px solid #ccc;
+border-radius: 5px;
+
+box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+
+background-color: #0067a5;
+font-family: "Anta", sans-serif;
+font-weight: 400;
+font-style: normal;
+
+}
+
+#input-box input[type="text"]:focus {
+
+outline: none;
+border-color: #bbb;
+
+}
+#input-box button {
+width: 50px;
+height: 50px;
+overflow: hidden;
+border-radius: 10px;
+background: none;
+border: none;
+margin-left: 10px;
+box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+cursor: pointer;
+}
+
+#input-box button:active {
+transform: translateY(2px);
+}
+
+#input-box img {
+width: 100%;
+height: 100%;
+object-fit: contain;
+}
+#button1 {
+margin-right: 10px;
+background-color: #0067a5;
+}
+
+#button2,
+#button3 {
+margin-left: 10px;
+}
+
+.dropdown {
+position: relative;
+display: inline-block;
+}
+
+.dropdown button {
+background-color: #0067a5;
+color: white;
+border: none;
+padding: 15px;
+border-radius: 10px;
+cursor: pointer;
+}
+
+#options-popup {
+position: absolute;
+bottom: 100%;
+left: 0;
+display: none;
+flex-direction: column;
+align-items: flex-start;
+padding: 10px;
+border-radius: 5px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+background-color: #0067a5;
+z-index: 1;
+animation: fadeIn 0.3s ease-in-out;
+margin-bottom: 25px;
+}
+#input-box.explode {
+display: flex;
+justify-content: center;
+align-items: center;
+position: absolute;
+top: 90%;
+left: 50%;
+transform: translate(-50%, -50%);
+animation: explodeAnimation 0.5s ease-in-out;
+}
+
+/* Keyframes for the explode animation */
+@keyframes explodeAnimation {
+from {
+transform: scale(0);
+opacity: 0;
+}
+
+to {
+transform: scale(1);
+opacity: 1;
+}
+}
+.chat-container {
+    position: fixed;
+    top: 100px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column-reverse; 
+    align-items: flex-start; 
+    z-index: 1;
+    padding: 10px;
+}
+
+.message-box {
+    max-width: 60%;
+    margin: 10px 0;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    max-height: 800px; 
+}
+
+.right {
+    margin-left: auto;
+    background-color: #0047ab;
+    font-family: "Anta", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    align-self: flex-end; 
+    max-height: 200px;
+}
+
+.left {
+    background-color: #0047ab;
+    font-family: "Anta", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    color: white;
+    max-width: 60%;
+    max-height: 800px; 
+    overflow-y: auto;
+}
+.message-box::-webkit-scrollbar {
+    width: 8px;
+}
+
+.message-box::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.message-box::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.message-box::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+@keyframes fadeInLetters {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+* {
+	border: 0;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+:root {
+	--hue: 223;
+	--bg: hsl(var(--hue),90%,90%);
+	--fg: hsl(var(--hue),90%,10%);
+	--trans-dur: 0.3s;
+	font-size: calc(16px + (20 - 16) * (100vw - 320px) / (1280 - 320));
+}
+body {
+	background-color: var(--bg);
+	color: var(--fg);
+	font: 1em/1.5 sans-serif;
+	height: 100vh;
+	display: grid;
+	place-items: center;
+	transition:
+		background-color var(--trans-dur),
+		color var(--trans-dur);
+}
+.smiley {
+	width: 8em;
+	height: 8em;
+}
+.smiley__eye1,
+.smiley__eye2,
+.smiley__mouth1,
+.smiley__mouth2 {
+	animation: eye1 3s ease-in-out infinite;
+}
+.smiley__eye1,
+.smiley__eye2 {
+	transform-origin: 64px 64px;
+}
+.smiley__eye2 {
+	animation-name: eye2;
+}
+.smiley__mouth1 {
+	animation-name: mouth1;
+}
+.smiley__mouth2 {
+	animation-name: mouth2;
+	visibility: hidden;
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: hsl(var(--hue),90%,10%);
+		--fg: hsl(var(--hue),90%,90%);
+	}
+}
+
+/* Animations */
+@keyframes eye1 {
+	from {
+		transform: rotate(-260deg) translate(0,-56px);
+	}
+	50%,
+	60% {
+		animation-timing-function: cubic-bezier(0.17,0,0.58,1);
+		transform: rotate(-40deg) translate(0,-56px) scale(1);
+	}
+	to {
+		transform: rotate(225deg) translate(0,-56px) scale(0.35);
+	}
+}
+@keyframes eye2 {
+	from {
+		transform: rotate(-260deg) translate(0,-56px);
+	}
+	50% {
+		transform: rotate(40deg) translate(0,-56px) rotate(-40deg) scale(1);
+	}
+	52.5% {
+		transform: rotate(40deg) translate(0,-56px) rotate(-40deg) scale(1,0);
+	}
+	55%,
+	70% {
+		animation-timing-function: cubic-bezier(0,0,0.28,1);
+		transform: rotate(40deg) translate(0,-56px) rotate(-40deg) scale(1);
+	}
+	to {
+		transform: rotate(150deg) translate(0,-56px) scale(0.4);
+	}
+}
+@keyframes eyeBlink {
+	from,
+	25%,
+	75%,
+	to {
+		transform: scaleY(1);
+	}
+	50% {
+		transform: scaleY(0);
+	}
+}
+@keyframes mouth1 {
+	from {
+		animation-timing-function: ease-in;
+		stroke-dasharray: 0 351.86;
+		stroke-dashoffset: 0;
+	}
+	25% {
+		animation-timing-function: ease-out;
+		stroke-dasharray: 175.93 351.86;
+		stroke-dashoffset: 0;
+	}
+	50% {
+		animation-timing-function: steps(1,start);
+		stroke-dasharray: 175.93 351.86;
+		stroke-dashoffset: -175.93;
+		visibility: visible;
+	}
+	75%,
+	to {
+		visibility: hidden;
+	}
+}
+@keyframes mouth2 {
+	from {
+		animation-timing-function: steps(1,end);
+		visibility: hidden;
+	}
+	50% {
+		animation-timing-function: ease-in-out;
+		visibility: visible;
+		stroke-dashoffset: 0;
+	}
+	to {
+		stroke-dashoffset: -351.86;
+	}
+}
+</style>
+<script>
+VANTA.BIRDS({
+    el: "#background",
+    mouseControls: true,
+    touchControls: true,
+    gyroControls: false,
+    minHeight: 200.00,
+    minWidth: 200.00,
+    scale: 1.00,
+    scaleMobile: 1.00,
+    backgroundColor: 0xa0a31,
+    color1: 0x841717,
+    color2: 0x1f8c96,
+    birdSize: 0.80,
+    wingSpan: 35.00,
+    speedLimit: 9.00
+});
+
+function toggleOptionsPopup() {
+    var optionsPopup = document.getElementById("options-popup");
+    optionsPopup.style.display = (optionsPopup.style.display === "flex") ? "none" : "flex";
+}
+
+window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
+
+recognition.addEventListener('result', (event) => {
+    const transcript = event.results[0][0].transcript;
+
+    if (event.results[0].isFinal) {
+        sendMessage(transcript);
+    }
+});
+
+function sendMessage(inputText) {
+    const apiEndpoint = '/send-message';
+    const chatContainer = document.querySelector(".chat-container");
+    const inputField = document.querySelector("#input-box input");
+
+    // Handling user messages
+    let userMessage = chatContainer.querySelector(".message-box.right");
+    if (!userMessage) {
+        userMessage = document.createElement("div");
+        userMessage.classList.add("message-box", "right");
+        chatContainer.prepend(userMessage);
+    }
+    userMessage.innerHTML = `<p>${inputText}</p>`;
+
+    // Handling loading and received messages
+    let loadingOrReceivedMessage = chatContainer.querySelector(".message-box.left");
+    if (loadingOrReceivedMessage) {
+        loadingOrReceivedMessage.remove(); // Remove the existing left message box
+    }
+    loadingOrReceivedMessage = document.createElement("div");
+    loadingOrReceivedMessage.classList.add("message-box", "left");
+    chatContainer.prepend(loadingOrReceivedMessage);
+
+    // Insert the SVG loading animation
+    loadingOrReceivedMessage.innerHTML = `<svg>...</svg>`; // Your SVG content here
+
+    fetch(apiEndpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: inputText })
+    })
+    .then(response => response.json())
+    .then(data => {
+        loadingOrReceivedMessage.innerHTML = `<p>${data.text}</p>`;
+        adjustScrollForLongMessages(loadingOrReceivedMessage);
+        inputField.value = ''; // Clear the input field
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        loadingOrReceivedMessage.innerHTML = "<p>An error occurred while fetching the response.</p>";
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const inputField = document.querySelector("#input-box input");
+    const sendButton = document.getElementById("button3"); // Assuming button3 is the ID for your send button
+
+    sendButton.addEventListener('click', function() {
+        const inputText = inputField.value.trim();
+        if (inputText !== '') {
+            sendMessage(inputText);
+            inputField.value = ''; // Clear input box
+        }
+    });
+
+    function handleKeyPress(event) {
+        if (event.key === 'Enter' && event.target.value.trim() !== '') {
+            sendMessage(event.target.value);
+            event.target.value = ''; // Clear input box
+        }
+    }
+
+    // Attach keypress event to input field
+    inputField.addEventListener('keypress', handleKeyPress);
+});
+function adjustScrollForLongMessages(element) {
+    // Assuming a maximum height for messages before scrolling is required
+    const maxHeight = 200; // pixels
+    if (element.scrollHeight > maxHeight) {
+        element.style.maxHeight = `${maxHeight}px`;
+        element.style.overflowY = 'auto';
+        // Apply modern scrollbar styling here if needed
+    }
+}
+
+
+recognition.addEventListener('speechend', () => {
+    recognition.stop();
+    isListening = false;
+});
+
+let isListening = false;
+
+function explodeAnimation() {
+    var inputBox = document.getElementById("input-box");
+    inputBox.classList.add("explode");
+    var button1 = document.getElementById("button1");
+    var button3 = document.getElementById("button3");
+    var inputText = document.querySelector("#input-box input");
+    button1.style.display = "none";
+    button3.style.display = "none";
+    inputText.style.display = "none";
+
+    if (!isListening) {
+        recognition.start();
+        isListening = true;
+    }
+
+    setTimeout(function () {
+        inputBox.classList.remove("explode");
+        button1.style.display = "block";
+        button3.style.display = "block";
+        inputText.style.display = "block";
+        recognition.stop();
+        isListening = false;
+    }, 10000);
+}
+
+function sendMessageOnEnter() {
+    var messageInput = document.querySelector("#input-box input");
+    var enteredText = messageInput.value.trim();
+
+    if (enteredText !== "") {
+        sendMessage(enteredText);
+        messageInput.value = ''; // Clear input box
+    }
+}
+
+function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+        sendMessageOnEnter();
+    }
+}
+
+</script>
+
+</body>
+
+</html> 
